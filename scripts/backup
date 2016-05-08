@@ -1,0 +1,26 @@
+#!/bin/bash
+#
+# this script is intended to run as a cron job. 
+# be sure to set source and destination directories.
+#
+# set the current date
+CURRENTDATE=$(date +%m_%d_%Y)
+# set source directory
+# SRCDIR=/home/foobar/
+SRCDIR=
+# set backup desitnation directory
+# DSTDIR=/mnt/share/backup/
+DSTDIR=
+# set backup desitnation directory with current date
+DSTDIRDATE=${DSTDIR}${CURRENTDATE}
+# if directories dont exist then create them
+if [ ! -d $DSTDIR ]; then
+mkdir $DSTDIR
+fi
+if [ ! -d $DSTDIRDATE ]; then
+mkdir $DSTDIRDATE
+fi
+# rsync with archive mode, compression during file transfer
+rsync -az $SRCDIR* $DSTDIRDATE
+# find backup desitnation directory and remove any files/folders older than specificed day using mtime
+find $DSTDIR -mtime +45 | xargs rm -Rf
